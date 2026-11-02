@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Super admin CloudWords: kelola semua room, link peserta, display, dan operator.">
+  <meta name="theme-color" content="#07030f">
+  <title>Super Admin — CloudWords</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="admin-page">
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="orb orb--pink" aria-hidden="true"></div>
+  <div class="orb orb--violet" aria-hidden="true"></div>
+  <div class="orb orb--cyan" aria-hidden="true"></div>
+
+  <div class="admin-shell">
+    <header class="admin-header">
+      <a class="brand" href="/" aria-label="CloudWords beranda">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M7 18h10a4 4 0 0 0 .4-7.98A6 6 0 0 0 5.7 9.3 4.35 4.35 0 0 0 7 18Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="brand-text">
+          CloudWords
+          <small>Super admin</small>
+        </span>
+      </a>
+
+      <div class="admin-header__nav">
+        <div class="admin-nav" data-site-nav></div>
+        <button class="btn btn-ghost" id="logoutButton" type="button" hidden>Keluar</button>
+      </div>
+    </header>
+
+    <section class="login-view" id="loginView">
+      <div class="login-card">
+        <p class="eyebrow"><span class="pulse-dot" aria-hidden="true"></span> Super admin</p>
+        <h1>Masuk untuk mengelola room</h1>
+        <p class="hint">
+          Buat room, bagikan link peserta/display/operator, dan pantau semua word cloud.
+          Hanya operator room yang bisa memulai atau mengakhiri sesi.
+        </p>
+
+        <form class="question-form login-form" id="loginForm">
+          <label class="sr-only" for="adminPassword">Password admin</label>
+          <input
+            id="adminPassword"
+            type="password"
+            placeholder="Password admin"
+            autocomplete="current-password"
+            required
+          >
+          <button class="btn btn-primary" id="loginButton" type="submit">Masuk</button>
+        </form>
+
+        <div class="feedback" id="loginFeedback" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="dashboardView" hidden>
+      <div class="admin-title-row">
+        <div>
+          <p class="eyebrow"><span class="pulse-dot" aria-hidden="true"></span> Dashboard pusat</p>
+          <h1>Semua room</h1>
+          <p class="muted title-sub" id="adminSummary">Memuat room…</p>
+        </div>
+
+        <div class="title-actions">
+          <div class="connection-pill" id="connectionPill" data-state="connecting" role="status" aria-live="polite">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span id="connectionText">Menghubungkan…</span>
+          </div>
+          <button class="btn btn-primary" id="createRoomButton" type="button">+ Buat room</button>
+        </div>
+      </div>
+
+      <section class="admin-summary-grid" aria-label="Ringkasan semua room">
+        <article class="stat-card stat-card--pink">
+          <p class="stat-card__label">Total room</p>
+          <span class="stat-card__value" id="summaryRooms">0</span>
+          <span class="stat-card__meta" id="summaryRoomsMeta">waiting + live + selesai</span>
+        </article>
+        <article class="stat-card stat-card--violet">
+          <p class="stat-card__label">Room live</p>
+          <span class="stat-card__value" id="summaryLive">0</span>
+          <span class="stat-card__meta">berjalan bersamaan</span>
+        </article>
+        <article class="stat-card stat-card--cyan">
+          <p class="stat-card__label">Peserta online</p>
+          <span class="stat-card__value" id="summaryParticipants">0</span>
+          <span class="stat-card__meta">di semua room</span>
+        </article>
+        <article class="stat-card stat-card--gold">
+          <p class="stat-card__label">Total jawaban</p>
+          <span class="stat-card__value" id="summaryAnswers">0</span>
+          <span class="stat-card__meta">di semua room</span>
+        </article>
+      </section>
+
+      <section class="panel room-form-panel" id="roomFormPanel" hidden aria-labelledby="roomFormTitle">
+        <header class="panel-head">
+          <h2 id="roomFormTitle">Buat room baru</h2>
+          <button class="btn btn-ghost btn-small" id="cancelRoomForm" type="button">Tutup</button>
+        </header>
+
+        <form class="room-form" id="roomForm">
+          <input type="hidden" id="editingRoomId" value="">
+          <label class="field">
+            <span>Nama room</span>
+            <input id="roomNameInput" type="text" maxlength="60" placeholder="Contoh: Ruang Kolaborasi" required>
+          </label>
+          <label class="field">
+            <span>Pertanyaan</span>
+            <input id="roomQuestionInput" type="text" maxlength="140" placeholder="Apa satu kata yang menggambarkan harimu?" required>
+          </label>
+          <div class="room-form__actions">
+            <button class="btn btn-primary" id="saveRoomButton" type="submit">Buat room</button>
+            <button class="btn btn-ghost" id="cancelRoomFormBottom" type="button">Batal</button>
+          </div>
+        </form>
+      </section>
+
+      <div class="admin-grid admin-grid--multi">
+        <div class="admin-col admin-col--wide">
+          <section class="panel" aria-labelledby="roomsPanelTitle">
+            <header class="panel-head">
+              <h2 id="roomsPanelTitle">Daftar room</h2>
+              <span class="panel-tag" id="roomsCountTag">0 room</span>
+            </header>
+
+            <div class="admin-room-list" id="adminRoomList">
+              <p class="muted">Memuat room…</p>
+            </div>
+          </section>
+        </div>
+
+        <div class="admin-col admin-col--secondary">
+          <section class="panel preview-panel" id="previewPanel" aria-labelledby="previewPanelTitle">
+            <header class="panel-head">
+              <h2 id="previewPanelTitle">Preview live</h2>
+              <button class="btn btn-ghost btn-small" id="closePreview" type="button" hidden>Tutup</button>
+            </header>
+
+            <p class="panel-desc" id="previewEmpty">Pilih <strong>Preview</strong> pada salah satu room untuk melihat word cloud-nya di sini. Preview bersifat read-only.</p>
+
+            <div class="preview-body" id="previewBody" hidden>
+              <div class="preview-head">
+                <strong id="previewRoomName">Room</strong>
+                <span class="status-badge status-badge--waiting" id="previewBadge">Menunggu</span>
+              </div>
+              <div class="mini-canvas-wrap">
+                <canvas id="previewCanvas" role="img" aria-label="Preview word cloud room"></canvas>
+              </div>
+              <div class="preview-stats">
+                <span><strong id="previewParticipants">0</strong> peserta</span>
+                <span><strong id="previewAnswers">0</strong> jawaban</span>
+                <span><strong id="previewUnique">0</strong> kata unik</span>
+              </div>
+              <div class="word-bars" id="previewWords">
+                <p class="muted">Belum ada jawaban.</p>
+              </div>
+              <ul class="activity-list activity-list--compact" id="previewActivity">
+                <li class="muted">Menunggu jawaban…</li>
+              </ul>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <footer class="admin-footer">
+        <span>CloudWords super admin · <code>/admin</code> / <code>/superadmin</code></span>
+        <span>Admin hanya mengelola room; start/end dilakukan operator.</span>
+      </footer>
+    </section>
+  </div>
+
+  <div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="/vendor/d3.layout.cloud.js" defer></script>
+  <script src="/socket.io/socket.io.js" defer></script>
+  <script src="/js/ui.js" defer></script>
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/wordcloud-center.js" defer></script>
+  <script src="/js/wordcloud.js" defer></script>
+  <script src="/js/admin.js" defer></script>
+</body>
+</html>

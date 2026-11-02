@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Waiting room peserta CloudWords.">
+  <meta name="theme-color" content="#07030f">
+  <title>Room Peserta — CloudWords</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="audience-page">
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="orb orb--pink" aria-hidden="true"></div>
+  <div class="orb orb--violet" aria-hidden="true"></div>
+  <div class="orb orb--cyan" aria-hidden="true"></div>
+
+  <main class="audience-main">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="CloudWords beranda">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M7 18h10a4 4 0 0 0 .4-7.98A6 6 0 0 0 5.7 9.3 4.35 4.35 0 0 0 7 18Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="brand-text">
+          CloudWords
+          <small>Room peserta</small>
+        </span>
+      </a>
+
+      <div class="connection-pill" id="connectionPill" data-state="connecting" role="status" aria-live="polite">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span id="connectionText">Menghubungkan…</span>
+      </div>
+    </header>
+
+    <section class="audience-card" id="roomCard" aria-labelledby="questionText">
+      <div class="room-kicker-row">
+        <p class="eyebrow"><span class="pulse-dot" aria-hidden="true"></span> <span id="roomName">Room</span></p>
+        <span class="status-badge status-badge--waiting" id="roomBadge">Menunggu</span>
+      </div>
+
+      <h1 class="question" id="questionText">Memuat pertanyaan…</h1>
+
+      <div class="waiting-panel" id="waitingPanel">
+        <span class="waiting-orbit" aria-hidden="true"></span>
+        <div>
+          <strong id="waitingTitle">Sesi belum dimulai</strong>
+          <p id="waitingText">Tunggu operator memulai room. Halaman ini akan aktif otomatis.</p>
+        </div>
+      </div>
+
+      <form id="answerForm" class="answer-form" novalidate hidden>
+        <div class="input-wrap">
+          <label class="sr-only" for="answerInput">Jawaban Anda</label>
+          <input
+            class="answer-input"
+            id="answerInput"
+            name="answer"
+            type="text"
+            placeholder="Contoh: kolaborasi"
+            maxlength="40"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            required
+          >
+          <span class="char-count" id="charCount" aria-hidden="true">0/40</span>
+        </div>
+
+        <button class="btn btn-primary btn-submit" id="submitBtn" type="submit">
+          <span class="btn-label">Kirim Jawaban</span>
+          <svg class="arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 12h15m0 0-5.5-5.5M19 12l-5.5 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </form>
+
+      <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+
+      <div class="submitted-row" id="submittedRow" hidden>
+        <span class="check" aria-hidden="true">✓</span>
+        <span id="submittedText">Jawaban terkirim!</span>
+      </div>
+
+      <div class="ended-panel" id="endedPanel" hidden>
+        <span class="ended-icon" aria-hidden="true">✓</span>
+        <div>
+          <strong>Sesi telah berakhir</strong>
+          <p>Terima kasih sudah ikut membentuk word cloud ini.</p>
+          <a class="btn btn-ghost" href="/">Kembali ke lobby</a>
+        </div>
+      </div>
+
+      <div class="ended-panel ended-panel--deleted" id="deletedPanel" hidden>
+        <span class="ended-icon" aria-hidden="true">!</span>
+        <div>
+          <strong>Room telah dihapus</strong>
+          <p>Admin menutup room ini. Silakan pilih room lain di lobby.</p>
+          <a class="btn btn-primary" href="/">Buka lobby</a>
+        </div>
+      </div>
+
+      <p class="hint" id="roomHint">
+        Tulis satu kata atau frasa singkat. Jawaban Anda langsung muncul di layar presenter.
+      </p>
+    </section>
+
+    <section class="mini-live" aria-label="Ringkasan live">
+      <div class="mini-live__head">
+        <span class="live-dot" aria-hidden="true"></span>
+        5 kata teratas
+      </div>
+
+      <div class="chips" id="topWords">
+        <span class="muted">Menunggu jawaban pertama…</span>
+      </div>
+
+      <div class="mini-live__meta">
+        <span><strong id="answerCount">0</strong> jawaban</span>
+        <span aria-hidden="true">·</span>
+        <span><strong id="peopleCount">0</strong> peserta</span>
+      </div>
+    </section>
+
+    <footer class="audience-footer">
+      CloudWords · real-time word cloud powered by Socket.IO
+    </footer>
+  </main>
+
+  <div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="/socket.io/socket.io.js" defer></script>
+  <script src="/js/ui.js" defer></script>
+  <script src="/js/room.js" defer></script>
+</body>
+</html>

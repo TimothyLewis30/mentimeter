@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Pilih room untuk membuka display atau mengirim jawaban.">
+  <meta name="theme-color" content="#07030f">
+  <title>Pilih Room — CloudWords</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="audience-page lobby-page picker-page">
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="orb orb--pink" aria-hidden="true"></div>
+  <div class="orb orb--violet" aria-hidden="true"></div>
+  <div class="orb orb--cyan" aria-hidden="true"></div>
+
+  <main class="lobby-shell">
+    <header class="topbar lobby-topbar">
+      <a class="brand" href="/" aria-label="CloudWords beranda">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M7 18h10a4 4 0 0 0 .4-7.98A6 6 0 0 0 5.7 9.3 4.35 4.35 0 0 0 7 18Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="brand-text">
+          CloudWords
+          <small>Multi-room word cloud</small>
+        </span>
+      </a>
+    </header>
+
+    <section class="lobby-hero" aria-labelledby="pickerTitle">
+      <p class="eyebrow"><span class="pulse-dot" aria-hidden="true"></span> <span id="pickerEyebrow">Pilih room</span></p>
+      <h1 id="pickerTitle">Pilih room</h1>
+      <p class="lobby-lead" id="pickerLead">
+        Pilih room yang ingin dibuka. Daftar ini berisi room yang sedang menunggu atau live.
+      </p>
+
+      <div class="lobby-actions">
+        <button class="btn btn-primary" id="refreshRooms" type="button">Muat ulang</button>
+        <span class="lobby-updated" id="pickerUpdated" role="status">Memuat room…</span>
+      </div>
+    </section>
+
+    <section class="room-grid" id="roomGrid" aria-label="Daftar room" aria-live="polite">
+      <article class="room-card room-card--skeleton" aria-hidden="true"></article>
+      <article class="room-card room-card--skeleton" aria-hidden="true"></article>
+    </section>
+
+    <section class="empty-lobby" id="emptyPicker" hidden>
+      <div class="empty-orbit" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M7 18h10a4 4 0 0 0 .4-7.98A6 6 0 0 0 5.7 9.3 4.35 4.35 0 0 0 7 18Z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2 id="emptyPickerTitle">Belum ada room yang terbuka</h2>
+      <p id="emptyPickerText">Hubungi admin untuk membuat room baru, lalu muat ulang halaman ini.</p>
+    </section>
+
+    <footer class="audience-footer lobby-footer">
+      CloudWords · pilih peran lewat menu di atas · real-time via Socket.IO
+    </footer>
+  </main>
+
+  <div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="/js/ui.js" defer></script>
+  <script src="/js/picker.js" defer></script>
+</body>
+</html>

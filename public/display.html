@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tampilan word cloud live untuk satu room.">
+  <meta name="theme-color" content="#06030d">
+  <title>Live Word Cloud — CloudWords</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="display-page">
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="orb orb--pink" aria-hidden="true"></div>
+  <div class="orb orb--violet" aria-hidden="true"></div>
+  <div class="orb orb--cyan" aria-hidden="true"></div>
+
+  <main class="display-shell">
+    <header class="display-header">
+      <div class="display-header__left">
+        <a class="brand brand--sm" href="/" aria-label="CloudWords beranda">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M7 18h10a4 4 0 0 0 .4-7.98A6 6 0 0 0 5.7 9.3 4.35 4.35 0 0 0 7 18Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="brand-text">CloudWords</span>
+        </a>
+
+        <div class="live-pill" id="livePill" data-state="online">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span id="liveLabel">Live</span>
+        </div>
+
+        <span class="display-room-name" id="displayRoomName">Room</span>
+      </div>
+
+      <div class="display-header__right">
+        <span class="rec-pill" id="recPill" hidden>
+          <span class="rec-pill__dot" aria-hidden="true"></span>
+          <span id="recLabel">REC</span>
+        </span>
+        <span class="display-url" id="displayUrl">localhost:3000</span>
+      </div>
+    </header>
+
+    <section class="display-question-wrap" aria-labelledby="questionText">
+      <p class="display-kicker" id="displayKicker">Kata-kata dari peserta</p>
+      <h1 class="display-question" id="questionText">Memuat pertanyaan…</h1>
+    </section>
+
+    <section class="canvas-stage" aria-label="Word cloud live">
+      <canvas id="wordCloudCanvas" role="img" aria-label="Word cloud jawaban peserta"></canvas>
+
+      <div class="empty-state" id="emptyState">
+        <div class="empty-orbit" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M7 18h10a4 4 0 0 0 .4-7.98A6 6 0 0 0 5.7 9.3 4.35 4.35 0 0 0 7 18Z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2 id="overlayTitle">Menunggu operator memulai</h2>
+        <p id="overlayText">Bagikan link peserta di bawah. Word cloud akan muncul otomatis saat sesi dimulai.</p>
+        <div class="join-code" id="joinLink">localhost:3000</div>
+      </div>
+
+      <div class="closed-banner" id="closedBanner" hidden>
+        <span aria-hidden="true">✓</span>
+        Sesi berakhir
+      </div>
+    </section>
+
+    <footer class="display-footer">
+      <div class="stat-row" aria-label="Statistik sesi">
+        <div class="stat"><span id="statParticipants">0</span><small>Peserta</small></div>
+        <div class="stat"><span id="statAnswers">0</span><small>Jawaban</small></div>
+        <div class="stat"><span id="statUnique">0</span><small>Kata unik</small></div>
+      </div>
+
+      <div class="display-hint">
+        Bergabung di <strong id="footerUrl">localhost:3000</strong>
+      </div>
+    </footer>
+  </main>
+
+  <div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="/vendor/d3.layout.cloud.js" defer></script>
+  <script src="/socket.io/socket.io.js" defer></script>
+  <script src="/js/ui.js" defer></script>
+  <script src="/js/wordcloud-center.js" defer></script>
+  <script src="/js/wordcloud.js" defer></script>
+  <script src="/js/display.js" defer></script>
+</body>
+</html>

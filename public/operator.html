@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dashboard operator room CloudWords.">
+  <meta name="theme-color" content="#07030f">
+  <title>Operator Room — CloudWords</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="admin-page operator-page">
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="orb orb--pink" aria-hidden="true"></div>
+  <div class="orb orb--violet" aria-hidden="true"></div>
+  <div class="orb orb--cyan" aria-hidden="true"></div>
+
+  <div class="admin-shell">
+    <header class="admin-header">
+      <a class="brand" href="/" aria-label="CloudWords beranda">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M7 18h10a4 4 0 0 0 .4-7.98A6 6 0 0 0 5.7 9.3 4.35 4.35 0 0 0 7 18Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="brand-text">
+          CloudWords
+          <small>Operator room</small>
+        </span>
+      </a>
+
+      <div class="admin-header__actions">
+        <span class="auth-pill" id="authPill" data-state="pending">Memeriksa akses…</span>
+        <a class="btn btn-ghost" id="openDisplayLink" href="#" target="_blank" rel="noopener">Buka Display ↗</a>
+      </div>
+    </header>
+
+    <div class="admin-title-row">
+      <div>
+        <p class="eyebrow"><span class="pulse-dot" aria-hidden="true"></span> Operator</p>
+        <h1 id="operatorRoomName">Memuat room…</h1>
+        <div class="title-meta">
+          <span class="status-badge status-badge--waiting" id="roomBadge">Menunggu</span>
+          <span class="muted" id="operatorRoomId"></span>
+        </div>
+      </div>
+
+      <div class="connection-pill" id="connectionPill" data-state="connecting" role="status" aria-live="polite">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span id="connectionText">Menghubungkan…</span>
+      </div>
+    </div>
+
+    <div class="banner banner--error" id="authError" hidden>
+      <strong>Akses operator tidak valid.</strong>
+      <p>Link operator salah atau token sudah dicabut. Minta link operator baru dari super admin.</p>
+      <a class="btn btn-ghost" href="/">Kembali ke lobby</a>
+    </div>
+
+    <div class="banner banner--warning" id="supersededBanner" hidden>
+      <strong id="supersededTitle">Sesi operator diambil alih</strong>
+      <p id="supersededText">Tab/perangkat operator lain menjadi pengendali room ini. Rekaman di tab ini sudah dihentikan dan diunduh.</p>
+    </div>
+
+    <div class="banner banner--warning" id="recordingWarning" hidden>
+      <strong>Rekaman terputus.</strong>
+      <p>Room tetap live. Klik <em>Lanjutkan rekaman</em> untuk memulai segmen baru.</p>
+    </div>
+
+    <div class="operator-grid" id="operatorGrid">
+      <div class="admin-col">
+        <section class="panel" aria-labelledby="controlTitle">
+          <header class="panel-head">
+            <h2 id="controlTitle">Kontrol sesi</h2>
+            <span class="panel-tag" id="controlTag">Waiting</span>
+          </header>
+
+          <p class="panel-desc">
+            Mulai room akan membuka pemilih layar, merekam tab <strong>Display</strong>, lalu
+            mengaktifkan form peserta. Room hanya bisa live setelah rekaman benar-benar berjalan.
+          </p>
+
+          <div class="control-buttons">
+            <button class="btn btn-success" id="startButton" type="button" disabled>● Mulai &amp; rekam</button>
+            <button class="btn btn-danger" id="endButton" type="button" hidden>■ Akhiri sesi</button>
+            <button class="btn btn-primary" id="resumeButton" type="button" hidden>● Lanjutkan rekaman</button>
+          </div>
+
+          <div class="panel-actions">
+            <button class="btn btn-ghost" id="resetButton" type="button" hidden>Reset jawaban</button>
+          </div>
+
+          <div class="link-list" id="linkList">
+            <div class="link-row">
+              <span class="link-row__label">Peserta</span>
+              <code class="link-row__value" id="participantLink">—</code>
+              <button class="btn btn-ghost btn-small" id="copyParticipant" type="button">Salin</button>
+            </div>
+            <div class="link-row">
+              <span class="link-row__label">Display</span>
+              <code class="link-row__value" id="displayLink">—</code>
+              <button class="btn btn-ghost btn-small" id="copyDisplay" type="button">Salin</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="recordingPanelTitle">
+          <header class="panel-head">
+            <h2 id="recordingPanelTitle">Screen recording</h2>
+            <span class="rec-badge" id="recBadge" data-state="idle">Siap</span>
+          </header>
+
+          <p class="panel-desc">
+            Rekaman berjalan di perangkat ini sampai Anda menekan <strong>Akhiri sesi</strong>.
+            File otomatis diunduh. Jika share screen berhenti, room tetap live dan Anda bisa
+            melanjutkan dengan segmen baru.
+          </p>
+
+          <div class="record-meta">
+            <span id="recStatus">Status: Siap</span>
+            <span class="rec-timer" id="recTimer">00:00</span>
+          </div>
+
+          <video class="rec-preview" id="preview" controls playsinline hidden></video>
+          <a class="btn btn-ghost download-link" id="downloadLink" href="#" hidden>Unduh rekaman</a>
+        </section>
+      </div>
+
+      <div class="admin-col admin-col--secondary">
+        <section class="stats-grid stats-grid--compact" aria-label="Statistik room">
+          <article class="stat-card stat-card--pink">
+            <p class="stat-card__label">Peserta online</p>
+            <span class="stat-card__value" id="statParticipants">0</span>
+          </article>
+          <article class="stat-card stat-card--violet">
+            <p class="stat-card__label">Total jawaban</p>
+            <span class="stat-card__value" id="statAnswers">0</span>
+          </article>
+          <article class="stat-card stat-card--cyan">
+            <p class="stat-card__label">Kata unik</p>
+            <span class="stat-card__value" id="statUnique">0</span>
+          </article>
+          <article class="stat-card stat-card--gold">
+            <p class="stat-card__label">Kata teratas</p>
+            <span class="stat-card__value stat-card__value--word" id="statTopWord">—</span>
+          </article>
+        </section>
+
+        <section class="panel" aria-labelledby="topWordsPanelTitle">
+          <header class="panel-head">
+            <h2 id="topWordsPanelTitle">Kata teratas</h2>
+            <span class="panel-tag" id="uniqueCount">0 unik</span>
+          </header>
+          <div class="word-bars" id="topWordsList">
+            <p class="muted">Belum ada jawaban.</p>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="activityPanelTitle">
+          <header class="panel-head">
+            <h2 id="activityPanelTitle">Jawaban terbaru</h2>
+            <span class="live-dot" aria-hidden="true"></span>
+          </header>
+          <ul class="activity-list" id="activityList">
+            <li class="muted">Menunggu jawaban…</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+
+    <footer class="admin-footer">
+      <span>Operator hanya bisa mengontrol room ini. Token tidak ditampilkan di halaman.</span>
+      <span id="footerRoomQuestion">—</span>
+    </footer>
+  </div>
+
+  <div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="/socket.io/socket.io.js" defer></script>
+  <script src="/js/ui.js" defer></script>
+  <script src="/js/recorder.js" defer></script>
+  <script src="/js/operator.js" defer></script>
+</body>
+</html>
